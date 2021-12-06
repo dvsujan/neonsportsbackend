@@ -11,7 +11,7 @@ module.exports = (req, res, next) => {
             }
             if (user.role !== 'admin') {
                 return res.status(401).json({
-                    message: 'You Are not admin'
+                    message: 'Admin Auth Failed'
                 })
             } else {
                 next();

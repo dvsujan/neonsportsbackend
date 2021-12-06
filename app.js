@@ -8,6 +8,7 @@ const app = express();
 const multer = require('multer');
 const userRoutes = require('./routes/user');
 const productRoutes = require('./routes/Product');
+const cartRoutes = require('./routes/Cart');
 require('dotenv').config()
 var cors = require('cors')
 app.use(express.json());
@@ -51,5 +52,5 @@ app.get('/api', (req, res) => {
 
 app.use('/api/user/', userRoutes);
 app.use('/api/products/', productRoutes);
-
+app.use('/api/cart/', cartRoutes);
 module.exports = app;

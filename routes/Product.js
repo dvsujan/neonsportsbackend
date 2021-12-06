@@ -18,7 +18,7 @@ const security = require('./security')
 
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
-        cb(null, './HQPost/');
+        cb(null, './Products/');
     },
     filename: function(req, file, cb) {
         cb(null, makeid(10) + file.originalname);
@@ -26,7 +26,7 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (req, file, cb) => {
-    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'image/jpg') {
         cb(null, true);
     } else {
         cb(null, false);
@@ -75,37 +75,25 @@ router.get('/:category', (req, res) => {
 });
 
 router.post('/', checkAuth, checkAdmin, upload.single('ProductImage'), async(req, res) => {
-    //TODO: unlink file after saving resized image 
-    const FinalPath = './Products/' + makeid(10) + 'resized' + req.file.originalname;
+    //TODO: unlink file after saving resized image
     const { filename: ProductImage } = req.file;
     const name = req.body.name;
     const price = req.body.price;
     const category = req.body.category;
     const description = req.body.description;
-
-    await sharp(req.file.path)
-        .resize({
-            fit: sharp.fit.contain,
-            width: 600,
-        })
-        .toFile(FinalPath, (err, info) => {
-            if (err) {
-                console.log(err);
-            }
-        })
-
-    fs.unlink(req.file.path, (err) => {
-        if (err) {
-            console.log(err);
-            res.json({ message: "image error" });
-        }
-    })
+    // console.log({
+    //         name: name,
+    //         price: price,
+    //         category: category,
+    //         description: description,
+    //         ProductImage: req.file.path,
+    //     })
     const product = new Product({
         name: name,
         price: price,
         category: category,
         description: description,
-        ProductImage: FinalPath.replace('./', ''),
+        ProductImage: req.file.path,
     });
     product.save().then(product => {
         res.status(201).json({
